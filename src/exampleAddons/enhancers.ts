@@ -1,6 +1,6 @@
 import { StoreEnhancer, createStore } from '@reduxjs/toolkit';
 import { rootReducer } from '../reducer';
-import { filterStatus, taskColor } from '../types/interfaces';
+import { AnyAction, filterStatus, taskColor } from '../types/interfaces';
 import { TasksActions } from '../featuers/tasks/actionTypes';
 import { FiltersActions } from '../featuers/filters/actionTypes';
 
@@ -8,8 +8,6 @@ interface InitialState {
   tasks?: { id: number; text: string; completed: boolean; color?: taskColor | undefined }[] | undefined;
   filters?: { status: filterStatus; colors: taskColor[] } | undefined;
 }
-
-type Action = TasksActions | FiltersActions;
 
 // example store enhancers from redux docs guide
 
@@ -21,7 +19,7 @@ export const sayHiOnDispatch = (createS: typeof createStore) => {
   ) => {
     const store = createS(reducer, preloadedState, enhancers);
 
-    function newDispatch(action: Action) {
+    function newDispatch(action: AnyAction) {
       const result = store.dispatch(action);
       console.log('Hi!');
       return result;
