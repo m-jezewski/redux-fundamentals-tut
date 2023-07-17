@@ -1,5 +1,6 @@
 import { Task, taskColor } from '../../../types/interfaces';
 import { store } from '../../../store';
+import { useDispatch } from 'react-redux';
 
 interface TaskListItemProps {
   task: Task;
@@ -8,17 +9,19 @@ interface TaskListItemProps {
 const availableColors: taskColor[] = ['Green', 'Blue', 'Orange', 'Purple', 'Red'];
 
 const TaskListItem = ({ task: { completed, id, text, color } }: TaskListItemProps) => {
+  const dispatch = useDispatch();
+
   const handleCompleteChanged = () => {
-    store.dispatch({ type: 'tasks/taskToggled', payload: id });
+    dispatch({ type: 'tasks/taskToggled', payload: id });
   };
 
   const handleColorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedColor = e.target.value as taskColor;
-    store.dispatch({ type: 'tasks/colorSelected', payload: { color: selectedColor, taskId: id } });
+    dispatch({ type: 'tasks/colorSelected', payload: { color: selectedColor, taskId: id } });
   };
 
   const handleDelete = () => {
-    store.dispatch({ type: 'tasks/taskDelted', payload: id });
+    dispatch({ type: 'tasks/taskDelted', payload: id });
   };
 
   return (

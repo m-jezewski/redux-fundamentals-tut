@@ -1,12 +1,13 @@
-import { store } from '../../../store';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 const TaskInput = () => {
   const [text, setText] = useState('');
+  const dispatch = useDispatch();
 
   const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      store.dispatch({ type: 'tasks/taskAdded', payload: text });
+      dispatch({ type: 'tasks/taskAdded', payload: text });
       setText('');
     }
   };
