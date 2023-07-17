@@ -14,4 +14,9 @@ interface Task {
   color?: taskColor;
 }
 
-export type { Task, taskColor, filterStatus, AnyAction };
+interface AppState {
+  tasks?: { id: number; text: string; completed: boolean; color?: taskColor }[];
+  filters?: { status: filterStatus; colors: taskColor[] };
+}
+
+export type { Task, taskColor, filterStatus, AnyAction, AppState };
