@@ -1,4 +1,4 @@
-import type { FiltersActions } from '../featuers/filters/actionTypes';
+import type { FiltersActions } from '../featuers/listControls/actionTypes';
 import type { TasksActions } from '../featuers/tasks/actionTypes';
 
 type taskColor = 'Green' | 'Blue' | 'Orange' | 'Purple' | 'Red';

@@ -1,11 +1,11 @@
 import { Middleware } from 'redux';
-import { AnyAction } from '../types/interfaces';
+import { AnyAction, AppState } from '../types/interfaces';
 
 // example middleware functions from redux docs guide
 
 export const loggerMiddleware: Middleware = (storeAPI) => (next) => (action: AnyAction) => {
   console.log('dispatching', action);
-  const result = next(action);
+  const result = next(action) as AppState;
   console.log('next state', storeAPI.getState());
   return result;
 };
