@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.1",
+    "faker": "^5.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.1"
@@ -36,8 +37,10 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.1",
     "jsdom": "^21.1.0",
+    "miragejs": "^0.1.35",
     "prettier": "^2.7.1",
     "prettier-config-nick": "^1.0.2",
+    "seedrandom": "^3.0.5",
     "typescript": "^5.0.2",
     "vite": "^4.0.0",
     "vitest": "^0.30.1"
