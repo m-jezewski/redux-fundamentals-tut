@@ -1,16 +1,16 @@
-import { useSelector } from 'react-redux';
+import { shallowEqual, useSelector } from 'react-redux';
 import { AppState } from '../../../types/interfaces';
 import TaskListItem from './taskListItem';
 
 const TaskList = () => {
-  const tasks = useSelector((state: AppState) => state.tasks);
+  const taskIds = useSelector((state: AppState) => state.tasks?.map((task) => task.id), shallowEqual);
 
   return (
     <div className="task-list">
-      {tasks?.map((item) => (
+      {taskIds?.map((taskId) => (
         <TaskListItem
-          task={item}
-          key={item.id}
+          id={taskId}
+          key={taskId}
         />
       ))}
     </div>

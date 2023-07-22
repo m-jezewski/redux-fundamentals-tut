@@ -1,14 +1,16 @@
-import { Task, taskColor } from '../../../types/interfaces';
-import { store } from '../../../store';
-import { useDispatch } from 'react-redux';
+import { AppState, Task, taskColor } from '../../../types/interfaces';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface TaskListItemProps {
-  task: Task;
+  id: number;
 }
 
 const availableColors: taskColor[] = ['Green', 'Blue', 'Orange', 'Purple', 'Red'];
 
-const TaskListItem = ({ task: { completed, id, text, color } }: TaskListItemProps) => {
+const TaskListItem = ({ id }: TaskListItemProps) => {
+  const task = useSelector((state: AppState) => state.tasks?.find((task) => task.id === id))!;
+  const { text, completed, color } = task;
+
   const dispatch = useDispatch();
 
   const handleCompleteChanged = () => {
