@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { saveNewTask } from '../tasksSlice';
 
 const TaskInput = () => {
   const [text, setText] = useState('');
@@ -7,7 +8,7 @@ const TaskInput = () => {
 
   const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      dispatch({ type: 'tasks/taskAdded', payload: text });
+      dispatch(saveNewTask(text) as any);
       setText('');
     }
   };

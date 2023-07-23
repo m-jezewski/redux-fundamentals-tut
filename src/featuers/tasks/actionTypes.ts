@@ -1,8 +1,8 @@
-import type { taskColor } from '../../types/interfaces';
+import type { Task, taskColor } from '../../types/interfaces';
 
 interface ActionAdd {
   type: 'tasks/taskAdded';
-  payload: string;
+  payload: { text: string };
 }
 
 interface ActionToggle {
@@ -31,12 +31,18 @@ interface ActionColorSelected {
   };
 }
 
+interface ActionLoadTasks {
+  type: 'tasks/allLoaded';
+  payload: Task[];
+}
+
 type TasksActions =
   | ActionAdd
   | ActionToggle
   | ActionDelete
   | ActionCompleteAll
   | ActionClearCompleted
-  | ActionColorSelected;
+  | ActionColorSelected
+  | ActionLoadTasks;
 
-export type { TasksActions };
+export type { TasksActions, ActionAdd, ActionLoadTasks };
