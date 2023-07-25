@@ -1,69 +1,81 @@
-import { Dispatch } from 'react';
 import { client } from '../../fakeApi/client';
-import type { Task } from '../../types/interfaces';
-import { ActionAdd, ActionLoadTasks, TasksActions } from './actionTypes';
+import type { Task, taskColor } from '../../types/interfaces';
+import { createAsyncThunk, createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AppDispatch } from '../../store';
 
 const initialState: Task[] = [];
 
-export const tasksReducer = (state = initialState, action: TasksActions) => {
-  switch (action.type) {
-    case 'tasks/taskAdded': {
-      return [...state, action.payload];
-    }
-    case 'tasks/taskToggled': {
-      return state.map((task) => {
-        if (task.id !== action.payload) return task;
-        return {
-          ...task,
-          completed: !task.completed,
-        };
-      });
-    }
-    case 'tasks/colorSelected': {
-      return state.map((task) => {
-        if (task.id !== action.payload.taskId) return task;
-        return {
-          ...task,
-          color: action.payload.color,
-        };
-      });
-    }
-    case 'tasks/taskDelted': {
-      return state.filter((task) => task.id !== action.payload);
-    }
-    case 'tasks/allCompleted': {
-      return state.map((task) => ({
-        ...task,
-        completed: true,
-      }));
-    }
-    case 'tasks/completedCleared': {
-      return state.filter((task) => task.completed !== true);
-    }
-    case 'tasks/allLoaded': {
-      return action.payload;
-    }
+const tasksAdatper = createEntityAdapter();
 
-    default:
-      return state;
-  }
-};
+export const tasksSlice = createSlice({
+  name: 'tasks',
+  initialState,
+  reducers: {
+    taskAdded(tasks, action: PayloadAction<Task>) {
+      tasks.push(action.payload);
+    },
+    taskToggled(tasks, action) {
+      const task = tasks.find((task) => task.id === action.payload);
+      if (task) {
+        task.completed = !task?.completed;
+      }
+    },
+    taskColorChanged: {
+      reducer(tasks, action: PayloadAction<{ id: number; color: taskColor }>) {
+        const task = tasks.find((task) => task.id === action.payload.id);
+        if (task) task.color = action.payload.color;
+      },
+      prepare(id: number, color: taskColor) {
+        return {
+          payload: { id, color },
+        };
+      },
+    },
+    taskDeleted(tasks, action: PayloadAction<number>) {
+      return tasks.filter((task) => task.id !== action.payload);
+    },
+    taskAllCompleted(tasks) {
+      tasks.forEach((task) => (task.completed = true));
+    },
+    taskCompletedCleared(tasks) {
+      return tasks.filter((task) => task.completed !== true);
+    },
+    tasksAllLoaded(tasks, action: PayloadAction<Task[]>) {
+      return (tasks = action.payload);
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchTasks.fulfilled, (tasks, action) => {
+        return action.payload;
+      })
+      .addCase(saveNewTask.fulfilled, (tasks, action) => {
+        tasks.push(action.payload);
+      });
+  },
+});
 
 // Thunks
 
-export const fetchTasks = async (dispatch: Dispatch<ActionLoadTasks>, getState: () => Task[]) => {
-  try {
-    const response = await client.get<{ todos: Task[] }>('/fakeApi/todos');
-    dispatch({ type: 'tasks/allLoaded', payload: response.todos });
-  } catch (err) {
-    console.log(String(err));
-  }
-};
+export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async () => {
+  const response = await client.get<{ todos: Task[] }>('/fakeApi/todos');
+  return response.todos;
+});
 
-export const saveNewTask = (text: string) => {
-  return async (dispatch: Dispatch<ActionAdd>, getState: () => Task[]) => {
-    const initialTask = { text };
-    const response = await client.post('/fakeApi/todos', { todo: initialTask });
-    dispatch({ type: 'tasks/taskAdded', payload: response.todo });
-  };
-};
+export const saveNewTask = createAsyncThunk('tasks/saveNewTask', async (text: string) => {
+  const initialTask = { text };
+  const response = await client.post('/fakeApi/todos', { todo: initialTask });
+  return response.todo as Task;
+});
+
+export const tasksReducer = tasksSlice.reducer;
+
+export const {
+  taskAdded,
+  taskToggled,
+  taskColorChanged,
+  taskDeleted,
+  taskAllCompleted,
+  taskCompletedCleared,
+  tasksAllLoaded,
+} = tasksSlice.actions;

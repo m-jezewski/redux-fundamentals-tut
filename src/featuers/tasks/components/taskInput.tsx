@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { saveNewTask } from '../tasksSlice';
+import { AppDispatch } from '../../../store';
 
 const TaskInput = () => {
   const [text, setText] = useState('');
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      dispatch(saveNewTask(text) as any);
       setText('');
+      dispatch(saveNewTask(text)).catch((error) => {
+        console.log(error);
+      });
     }
   };
 
