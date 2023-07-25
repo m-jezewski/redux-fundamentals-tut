@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { filtersStatusUpdated } from '../filtersSlice';
+import { filterStatus } from '../../../types/interfaces';
 
 const StatusFilter = () => {
-  const [filterStatus, setFilterStatus] = useState('All');
+  const dispatch = useDispatch();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterStatus(e.target.value);
+    const option = e.target.value as filterStatus;
+    dispatch(filtersStatusUpdated(option));
   };
 
   return (
@@ -15,7 +18,6 @@ const StatusFilter = () => {
           type="radio"
           name="status"
           value="All"
-          checked={filterStatus === 'All'}
           onChange={handleChange}
         />
         All
@@ -25,7 +27,6 @@ const StatusFilter = () => {
           type="radio"
           name="status"
           value="Active"
-          checked={filterStatus === 'Active'}
           onChange={handleChange}
         />
         Active
@@ -35,7 +36,6 @@ const StatusFilter = () => {
           type="radio"
           name="status"
           value="Completed"
-          checked={filterStatus === 'Completed'}
           onChange={handleChange}
         />
         Completed

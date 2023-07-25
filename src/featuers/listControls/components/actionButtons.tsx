@@ -1,14 +1,15 @@
 import { useDispatch } from 'react-redux';
+import { taskAllCompleted, taskCompletedCleared } from '../../tasks/tasksSlice';
 
 const ActionButtons = () => {
   const dispatch = useDispatch();
 
   const handleMarkAllCompleted = () => {
-    dispatch({ type: 'tasks/allCompleted' });
+    dispatch(taskAllCompleted());
   };
 
   const handleClearCompleted = () => {
-    dispatch({ type: 'tasks/completedCleared' });
+    dispatch(taskCompletedCleared());
   };
 
   return (

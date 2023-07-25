@@ -1,38 +1,36 @@
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { filterStatus, taskColor } from '../../types/interfaces';
-import type { FiltersActions } from './actionTypes';
 
 const initialState: { status: filterStatus; colors: taskColor[] } = {
   status: 'All',
   colors: [],
 };
 
-export const filtersReducer = (state = initialState, { type, payload }: FiltersActions) => {
-  switch (type) {
-    case 'filters/statusFilterUpdated': {
-      return {
-        ...state,
-        status: payload,
-      };
-    }
-    case 'filters/colorFilterUpdated': {
-      switch (payload.changeType) {
-        case 'added':
-          if (state.colors.includes(payload.color)) return state;
+const fitlersSlice = createSlice({
+  name: 'filters',
+  initialState,
+  reducers: {
+    filtersStatusUpdated(state, action: PayloadAction<filterStatus>) {
+      state.status = action.payload;
+    },
+    filtersColorFilterUpdated: {
+      prepare(color: taskColor, changeType: 'add' | 'remove') {
+        return {
+          payload: { color, changeType },
+        };
+      },
+      reducer(state, action: PayloadAction<{ color: taskColor; changeType: 'add' | 'remove' }>) {
+        const { color, changeType } = action.payload;
+        if (changeType == 'add') {
+          state.colors.push(color);
+        } else {
+          state.colors = state.colors.filter((taskColor) => taskColor !== color);
+        }
+      },
+    },
+  },
+});
 
-          return {
-            ...state,
-            colors: [...state.colors, payload.color],
-          };
-        case 'removed':
-          return {
-            ...state,
-            colors: state.colors.filter((color) => color !== payload.color),
-          };
-        default:
-          return state;
-      }
-    }
-    default:
-      return state;
-  }
-};
+export const filtersReducer = fitlersSlice.reducer;
+
+export const { filtersStatusUpdated, filtersColorFilterUpdated } = fitlersSlice.actions;
