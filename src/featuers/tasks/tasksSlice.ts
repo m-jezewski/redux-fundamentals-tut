@@ -1,11 +1,8 @@
 import { client } from '../../fakeApi/client';
 import type { Task, taskColor } from '../../types/interfaces';
-import { createAsyncThunk, createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppDispatch } from '../../store';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: Task[] = [];
-
-const tasksAdatper = createEntityAdapter();
 
 export const tasksSlice = createSlice({
   name: 'tasks',
