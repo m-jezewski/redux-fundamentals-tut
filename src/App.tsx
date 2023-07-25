@@ -5,10 +5,12 @@ import RemianingTasks from './featuers/listControls/components/remianingTasks';
 import TaskInput from './featuers/tasks/components/taskInput';
 import TaskList from './featuers/tasks/components/taskList';
 import { fetchTasks } from './featuers/tasks/tasksSlice';
-import { store } from './store';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from './store';
 
 const App = () => {
-  store.dispatch(fetchTasks as any);
+  const disptach = useDispatch<AppDispatch>();
+  disptach(fetchTasks()).catch((err) => console.log(err));
 
   return (
     <div className="App">

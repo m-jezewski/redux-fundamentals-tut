@@ -1,19 +1,13 @@
-import { createStore, compose, applyMiddleware } from 'redux';
-import { StoreEnhancer } from '@reduxjs/toolkit';
-import { rootReducer } from './reducer';
-import { includeMeaningOfLife, sayHiOnDispatch } from './exampleAddons/enhancers';
-import { delayedMessageMiddleware, loggerMiddleware } from './exampleAddons/middleware';
-import thunkMiddleware from 'redux-thunk';
+import { configureStore } from '@reduxjs/toolkit';
+import { tasksReducer } from './featuers/tasks/tasksSlice';
+import { filtersReducer } from './featuers/listControls/filtersSlice';
 
-//  Enhancers from previous steps
-//const composedEnhancer: StoreEnhancer<unknown, object> = compose(sayHiOnDispatch, includeMeaningOfLife);
-//export const store = createStore(rootReducer, {}, composedEnhancer);
+export const store = configureStore({
+  reducer: {
+    tasks: tasksReducer,
+    filters: filtersReducer,
+  },
+});
 
-// Middleware from previous steps
-// const middlewareEnhancer = applyMiddleware(loggerMiddleware, delayedMessageMiddleware);
-
-// export const store = createStore(rootReducer, middlewareEnhancer);
-
-const composedEnhancer = applyMiddleware(thunkMiddleware);
-
-export const store = createStore(rootReducer, composedEnhancer);
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
