@@ -9,11 +9,9 @@ interface TaskListItemProps {
 const availableColors: taskColor[] = ['Green', 'Blue', 'Orange', 'Purple', 'Red'];
 
 const TaskListItem = ({ id }: TaskListItemProps) => {
-  const task = useSelector((state: AppState) => state.tasks?.find((task) => task.id === id))!;
-  const { text, completed, color } = task;
+  const { text, completed, color } = useSelector((state: AppState) => state.tasks?.find((task) => task.id === id))!;
 
   const dispatch = useDispatch();
-
   const handleCompleteChanged = () => {
     dispatch(taskToggled(id));
   };

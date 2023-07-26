@@ -1,6 +1,7 @@
 import { client } from '../../fakeApi/client';
-import type { Task, taskColor } from '../../types/interfaces';
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../../store';
+import type { AppState, Task, taskColor } from '../../types/interfaces';
+import { createAsyncThunk, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState: Task[] = [];
 
@@ -76,3 +77,23 @@ export const {
   taskCompletedCleared,
   tasksAllLoaded,
 } = tasksSlice.actions;
+
+// Selector
+
+export const selectFitleredTaskIds = createSelector(
+  (state: RootState) => state.tasks,
+  (state: RootState) => state.filters,
+  (tasks, filters) => {
+    const { status, colors } = filters;
+    const colorFiltered =
+      colors.length === 0 ? tasks : tasks.filter((task) => task.color && colors.includes(task.color));
+
+    const statusFiltered = tasks.filter((task) => {
+      if (status === 'All') return true;
+      if (status === 'Active') return !task.completed;
+      if (status === 'Completed') return task.completed;
+    });
+
+    return colorFiltered.filter((task) => statusFiltered.includes(task)).map((task) => task.id);
+  },
+);

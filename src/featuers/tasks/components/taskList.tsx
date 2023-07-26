@@ -1,9 +1,9 @@
 import { shallowEqual, useSelector } from 'react-redux';
-import { AppState } from '../../../types/interfaces';
 import TaskListItem from './taskListItem';
+import { selectFitleredTaskIds } from '../tasksSlice';
 
 const TaskList = () => {
-  const taskIds = useSelector((state: AppState) => state.tasks?.map((task) => task.id), shallowEqual);
+  const taskIds = useSelector(selectFitleredTaskIds, shallowEqual);
 
   return (
     <div className="task-list">
