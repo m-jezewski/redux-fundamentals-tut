@@ -1,16 +1,31 @@
 import { Task } from '../../types/interfaces';
-import { tasksReducer } from './tasksSlice';
+import {
+  taskAdded,
+  taskAllCompleted,
+  taskColorChanged,
+  taskCompletedCleared,
+  taskDeleted,
+  taskToggled,
+  tasksReducer,
+} from './tasksSlice';
 
-test('Adds new task to list', () => {
-  const initialState = [
+test('Adds new task to existing list', () => {
+  const initialState = [{ id: 0, text: 'Test task 1', completed: false }];
+
+  const result: Task[] = tasksReducer(initialState, taskAdded({ id: 1, completed: false, text: 'Test task 2' }));
+
+  expect(result).toEqual([
     { id: 0, text: 'Test task 1', completed: false },
     { id: 1, text: 'Test task 2', completed: false },
-  ];
+  ]);
+});
 
-  const result: Task[] = tasksReducer(initialState, { type: 'tasks/taskAdded', payload: 'Test task 3' });
+test('Adds new task to new list', () => {
+  const initialState: Task[] = [];
 
-  expect(result).toContainEqual({ id: 2, text: 'Test task 3', completed: false });
-  expect(result).toHaveLength(3);
+  const result: Task[] = tasksReducer(initialState, taskAdded({ id: 0, completed: false, text: 'Test task 1' }));
+
+  expect(result).toEqual([{ id: 0, text: 'Test task 1', completed: false }]);
 });
 
 test('Toggles completed status of task with given id', () => {
@@ -19,9 +34,12 @@ test('Toggles completed status of task with given id', () => {
     { id: 1, text: 'Test task 2', completed: false },
   ];
 
-  const result: Task[] = tasksReducer(initialState, { type: 'tasks/taskToggled', payload: 1 });
+  const result: Task[] = tasksReducer(initialState, taskToggled(1));
 
-  expect(result).toContainEqual({ ...initialState[1], completed: true });
+  expect(result).toEqual([
+    { id: 0, text: 'Test task 1', completed: false },
+    { id: 1, text: 'Test task 2', completed: true },
+  ]);
 });
 
 test('Sets task color to passed value', () => {
@@ -30,12 +48,12 @@ test('Sets task color to passed value', () => {
     { id: 1, text: 'Test task 2', completed: false },
   ];
 
-  const result: Task[] = tasksReducer(initialState, {
-    type: 'tasks/colorSelected',
-    payload: { taskId: 0, color: 'Green' },
-  });
+  const result: Task[] = tasksReducer(initialState, taskColorChanged(0, 'Green'));
 
-  expect(result).toContainEqual({ ...initialState[0], color: 'Green' });
+  expect(result).toEqual([
+    { id: 0, text: 'Test task 1', completed: false, color: 'Green' },
+    { id: 1, text: 'Test task 2', completed: false },
+  ]);
 });
 
 test('Deletes task from array', () => {
@@ -44,11 +62,9 @@ test('Deletes task from array', () => {
     { id: 1, text: 'Test task 2', completed: false },
   ];
 
-  const result: Task[] = tasksReducer(initialState, { type: 'tasks/taskDelted', payload: 0 });
+  const result: Task[] = tasksReducer(initialState, taskDeleted(0));
 
-  expect(result).toHaveLength(1);
-  expect(result).toContainEqual(initialState[1]);
-  expect(result).not.toContainEqual(initialState[0]);
+  expect(result).toEqual([{ id: 1, text: 'Test task 2', completed: false }]);
 });
 
 test('Sets completed status to true for all tasks', () => {
@@ -57,7 +73,7 @@ test('Sets completed status to true for all tasks', () => {
     { id: 1, text: 'Test task 2', completed: false },
   ];
 
-  const result: Task[] = tasksReducer(initialState, { type: 'tasks/allCompleted' });
+  const result: Task[] = tasksReducer(initialState, taskAllCompleted());
   expect(result).toEqual([
     { id: 0, text: 'Test task 1', completed: true },
     { id: 1, text: 'Test task 2', completed: true },
@@ -72,9 +88,10 @@ test('Removes all completed tasks', () => {
     { id: 3, text: 'Test task 2', completed: true },
   ];
 
-  const result: Task[] = tasksReducer(initialState, { type: 'tasks/completedCleared' });
+  const result: Task[] = tasksReducer(initialState, taskCompletedCleared());
 
-  expect(result).toHaveLength(2);
-  expect(result).not.toContainEqual(initialState[1]);
-  expect(result).toContainEqual(initialState[0]);
+  expect(result).toEqual([
+    { id: 0, text: 'Test task 1', completed: false },
+    { id: 2, text: 'Test task 2', completed: false },
+  ]);
 });

@@ -1,5 +1,5 @@
 import { filterStatus, taskColor } from '../../types/interfaces';
-import { filtersReducer } from './filtersSlice';
+import { filtersColorFilterUpdated, filtersReducer, filtersStatusUpdated } from './filtersSlice';
 
 test('Updates status filter', () => {
   const initialState: { status: filterStatus; colors: taskColor[] } = {
@@ -7,9 +7,11 @@ test('Updates status filter', () => {
     colors: ['Red', 'Green', 'Purple'],
   };
 
-  const result = filtersReducer(initialState, { type: 'filters/statusFilterUpdated', payload: 'Completed' });
-  expect(result.status).toEqual('Completed');
-  expect(result.colors).toEqual(initialState.colors);
+  const result = filtersReducer(initialState, filtersStatusUpdated('Completed'));
+  expect(result).toEqual({
+    status: 'Completed',
+    colors: ['Red', 'Green', 'Purple'],
+  });
 });
 
 test('Adds color to colors filter', () => {
@@ -18,29 +20,12 @@ test('Adds color to colors filter', () => {
     colors: ['Red', 'Green', 'Purple'],
   };
 
-  const result = filtersReducer(initialState, {
-    type: 'filters/colorFilterUpdated',
-    payload: { changeType: 'added', color: 'Blue' },
-  });
-  expect(result.colors).toContain('Blue');
-  expect(result.colors).toHaveLength(initialState.colors.length + 1);
-  expect(result.status).toEqual(initialState.status);
-});
+  const result = filtersReducer(initialState, filtersColorFilterUpdated('Blue', 'add'));
 
-test('Adds color to colors filter', () => {
-  const initialState: { status: filterStatus; colors: taskColor[] } = {
+  expect(result).toEqual({
     status: 'All',
-    colors: ['Red', 'Green', 'Purple'],
-  };
-
-  const result = filtersReducer(initialState, {
-    type: 'filters/colorFilterUpdated',
-    payload: { changeType: 'added', color: 'Blue' },
+    colors: ['Red', 'Green', 'Purple', 'Blue'],
   });
-
-  expect(result.colors).toContain('Blue');
-  expect(result.colors).toHaveLength(initialState.colors.length + 1);
-  expect(result.status).toEqual(initialState.status);
 });
 
 test('Removes color from colors filter', () => {
@@ -49,12 +34,10 @@ test('Removes color from colors filter', () => {
     colors: ['Red', 'Green', 'Purple'],
   };
 
-  const result = filtersReducer(initialState, {
-    type: 'filters/colorFilterUpdated',
-    payload: { changeType: 'removed', color: 'Red' },
-  });
+  const result = filtersReducer(initialState, filtersColorFilterUpdated('Red', 'remove'));
 
-  expect(result.colors).not.toContain('Red');
-  expect(result.colors).toHaveLength(initialState.colors.length - 1);
-  expect(result.status).toEqual(initialState.status);
+  expect(result).toEqual({
+    status: 'All',
+    colors: ['Green', 'Purple'],
+  });
 });
